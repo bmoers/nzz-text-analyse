@@ -1,31 +1,13 @@
 version: "3.6"
 services:
-  traefik:
-    image: traefik:v2.2.11
-    command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.network=nzz-text-analyse_web"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - "8018:80"    
-    networks:
-      - web
-
   node:
     build:
       context: ./    
     restart: always
     networks:
       - web
-    labels:
-      traefik.enable: true
-      traefik.http.routers.nzz.rule: "Host(`nzz.127.0.0.1.nip.io`, `nzz.moers.dev`)"
-      traefik.http.routers.nzz.entrypoints: web
-      traefik.http.routers.nzz.middlewares: 
+    ports:
+      - 8018:3000
 
 networks:
   web:
