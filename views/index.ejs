@@ -30,7 +30,8 @@ background-color: #f2f2f2;
 
     <td><%= person.pattern ? 'Pattern': ''%></td>
 
-    <td><%= person.link %></td>
+    <td><a href="http://www.google.com/search?q=<%= person.title %>" target="_blank"
+        rel="noopener noreferrer">search</a></td>
   </tr>
   <% }); %>
 </table>
