@@ -1,0 +1,48 @@
+version: "3.6"
+services:
+  traefik:
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+
+      - "--providers.docker.network=erm4sn_web"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.mytlschallenge.acme.tlschallenge=true"
+      ##- "--certificatesresolvers.mytlschallenge.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.mytlschallenge.acme.email=support@erm4sn.com"
+      - "--certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json"
+    image: traefik:v2.2.11
+    restart: always
+    ports:
+      - "80:80"
+  
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  
+    networks:
+      - web
+
+  node:
+    build:
+      context: ./
+      
+    environment: 
+      - VUE_APP_API_URI=http://localhost/api
+    ports:
+      - "3000:3000"
+    command: npm start
+    networks:
+      - web
+
+    labels:
+      traefik.enable: true
+      traefik.http.routers.erm4sn.rule: "Host(`nzz.127.0.0.1.nip.io`)"
+      traefik.http.routers.erm4sn.entrypoints: web
+      traefik.http.routers.erm4sn.middlewares: 
+
+networks:
+  web:
+    driver: bridge
