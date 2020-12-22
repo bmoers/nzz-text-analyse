@@ -8,6 +8,13 @@ services:
       - web
     ports:
       - 8018:3000
+    volumes:
+      - ./text.json:/usr/src/app/text.json
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nzz.rule=Host(`nzz.moers.dev`,`nzz.127.0.0.1.nip.io`)"
+      - "traefik.http.routers.nzz.entrypoints=websecure"
+      - "traefik.http.routers.nzz.tls.certresolver=mytlschallenge"
 
 networks:
   web:

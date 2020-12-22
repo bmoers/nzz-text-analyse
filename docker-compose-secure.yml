@@ -1,0 +1,29 @@
+version: "3.6"
+services:
+  traefik:
+    image: traefik:v2.2.11
+    restart: always
+    command:
+      - "--api.insecure=false"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.mytlschallenge.acme.tlschallenge=true"
+      - "--certificatesresolvers.mytlschallenge.acme.email=webmaster@moers.ch"
+      - "--certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json"    
+    ports:
+      - "8018:443"
+    volumes:
+      - "./letsencrypt:/letsencrypt"
+      - /var/run/docker.sock:/var/run/docker.sock
+  node:
+    build:
+      context: ./    
+    restart: always
+
+    labels:
+      - "traefik.http.routers.nzz.rule=Host(`nzz.moers.dev`)"
+      - "traefik.http.routers.nzz.entrypoints=websecure"
+      - "traefik.http.routers.nzz.tls.certresolver=mytlschallenge"
+    
+

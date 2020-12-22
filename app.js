@@ -55,6 +55,13 @@ const persons = text.map((p)=> {
         p.pattern = true;
         p.check = true;
     }
+
+    const frag = (title.match(/\?/g) || []).length;
+    if (frag > 0) {
+        p.pattern = true;
+        p.check = true;
+    }
+
     return p;
 })
 
